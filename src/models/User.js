@@ -7,19 +7,16 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true,  // mantém apenas este
       lowercase: true,
       trim: true,
       match: /.+\@.+\..+/,
     },
     password: { type: String, required: true, minlength: 6 },
-    // guardaremos os refresh tokens ativos por usuário (um por sessão/dispositivo)
     refreshTokens: { type: [String], default: [] },
   },
   { timestamps: true }
 );
-
-userSchema.index({ email: 1 }, { unique: true });
 
 // hash automático antes de salvar quando a senha for criada/alterada
 userSchema.pre("save", async function (next) {

@@ -1,18 +1,20 @@
 const User = require("../models/User");
 const { registerSchema, loginSchema } = require("../validation/authSchemas");
-const {
-  signAccessToken,
-  signRefreshToken,
-} = require("../utils/jwt");
+const { signAccessToken, signRefreshToken } = require("../utils/jwt");
 
 exports.register = async (req, res) => {
-  const parsed = registerSchema.safeParse(req.body);
-  if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
+  // Validação com Joi
+  const { error, value } = registerSchema.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    const errors = error.details.map((e) => ({
+      field: e.path[0],
+      message: e.message,
+    }));
     return res.status(400).json({ message: "Dados inválidos", errors });
   }
 
-  const { name, email, password } = parsed.data;
+  const { name, email, password } = value;
 
   try {
     const exists = await User.findOne({ email });
@@ -38,13 +40,17 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const parsed = loginSchema.safeParse(req.body);
-  if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
+  const { error, value } = loginSchema.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    const errors = error.details.map((e) => ({
+      field: e.path[0],
+      message: e.message,
+    }));
     return res.status(400).json({ message: "Dados inválidos", errors });
   }
 
-  const { email, password } = parsed.data;
+  const { email, password } = value;
 
   try {
     const user = await User.findOne({ email });

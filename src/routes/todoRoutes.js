@@ -1,17 +1,20 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Todo = require('../models/Todo');
-const authMiddleware = require('../middlewares/authMiddleware'); // seu middleware JWT
+const Todo = require("../models/Todo");
+const authMiddleware = require("../middlewares/authMiddleware");
+const validate = require("../middlewares/validate");
+const { createTodoSchema, updateTodoSchema } = require('../validation/todoValidation');
 
 // Criar um novo todo
-router.post('/', authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, validate(createTodoSchema), async (req, res) => {
   try {
-    const { title } = req.body;
-    if (!title) return res.status(400).json({ message: "O título é obrigatório" });
+    const { title, description, done } = req.body;
 
     const todo = new Todo({
       title,
-      owner: req.user._id
+      description,
+      done: done || false, // padrão false se não enviar
+      owner: req.user._id,
     });
 
     await todo.save();
@@ -22,7 +25,7 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // Listar todos do usuário
-router.get('/', authMiddleware, async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const todos = await Todo.find({ owner: req.user._id });
     res.json(todos);
@@ -32,7 +35,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // Buscar um todo pelo ID
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const todo = await Todo.findOne({ _id: req.params.id, owner: req.user._id });
     if (!todo) return res.status(404).json({ message: "Todo não encontrado" });
@@ -43,13 +46,15 @@ router.get('/:id', authMiddleware, async (req, res) => {
 });
 
 // Atualizar um todo
-router.put('/:id', authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, validate(updateTodoSchema), async (req, res) => {
   try {
     const todo = await Todo.findOne({ _id: req.params.id, owner: req.user._id });
     if (!todo) return res.status(404).json({ message: "Todo não encontrado" });
 
-    const { title, done } = req.body;
+    const { title, description, done } = req.body;
+
     if (title !== undefined) todo.title = title;
+    if (description !== undefined) todo.description = description;
     if (done !== undefined) todo.done = done;
 
     await todo.save();
@@ -60,7 +65,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
 });
 
 // Deletar um todo
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const todo = await Todo.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
     if (!todo) return res.status(404).json({ message: "Todo não encontrado" });
