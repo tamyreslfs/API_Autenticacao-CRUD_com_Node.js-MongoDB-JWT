@@ -1,31 +1,32 @@
-##API Node.js com JWT e CRUD de Todos
-Descrição
+# API Node.js com JWT e CRUD de Todos
+
+## Descrição
 
 Esta API REST permite:
 
-Registrar e autenticar usuários usando JWT (access + refresh tokens).
+- Registrar e autenticar usuários usando JWT (access + refresh tokens).
 
-Gerenciar tarefas (todos) associadas a cada usuário.
+- Gerenciar tarefas (todos) associadas a cada usuário.
 
-Proteger rotas com autenticação via JWT.
+- Proteger rotas com autenticação via JWT.
 
-Validar dados de entrada com Joi.
+- Validar dados de entrada com Joi.
 
 ---
 
-##Tecnologias utilizadas
+## Tecnologias utilizadas
 
-Node.js + Express
+- Node.js + Express
 
-MongoDB + Mongoose
+- MongoDB + Mongoose
 
-JWT para autenticação
+- JWT para autenticação
 
-bcrypt para hash de senhas
+- bcrypt para hash de senhas
 
-Joi para validação de dados
+- Joi para validação de dados
 
-CORS habilitado (básico)
+- CORS habilitado (básico)
 
 ---
 
