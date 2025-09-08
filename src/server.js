@@ -9,7 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 
 const PORT = 3000;
 
-mongoose.connect('mongodb+srv://tamyreslopes:9541@cluster0.k2mxz.mongodb.net/trabapicrudnode?retryWrites=true&w=majority&appName=Cluster0').then(() => {
+mongoose.connect('mongodb+srv://usuario:senha@cluster0.k2mxz.mongodb.net/trabapicrudnode?retryWrites=true&w=majority&appName=Cluster0').then(() => {
     console.log("Conexão com o mongodb estabelecida com sucesso")
 }).catch(error => {
     console.log("Erro ao conectar o mongodb", error);
